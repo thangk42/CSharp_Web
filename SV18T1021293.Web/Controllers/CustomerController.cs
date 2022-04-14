@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SV18T1021293.BusinessLayer;
 
 namespace SV18T1021293.Web.Controllers
 {
@@ -18,9 +19,14 @@ namespace SV18T1021293.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, string searchValue = "")
         {
-            return View();
+            int pageSize = 10;
+            int rowCount = 0;
+
+            var model = CommonDataService.ListOfCustomers(page, pageSize, searchValue, out rowCount);
+            ViewBag.RowCount = rowCount;
+            return View(model);
         }
 
         /// <summary>
