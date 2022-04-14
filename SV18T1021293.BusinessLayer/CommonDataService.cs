@@ -14,6 +14,7 @@ namespace SV18T1021293.BusinessLayer
     public static class CommonDataService
     {
         private static ICategoryDAL categoryDB;
+        private static ICustomerDAL customerDB;
         /// <summary>
         /// Ctor
         /// </summary>
@@ -25,6 +26,7 @@ namespace SV18T1021293.BusinessLayer
             if (provider == "SQLServer")
             {
                 categoryDB = new DataLayer.SQLServer.CategoryDAL(connectionString);
+                customerDB = new DataLayer.SQLServer.CustomerDAL(connectionString);
             }
             else
             {
@@ -38,6 +40,20 @@ namespace SV18T1021293.BusinessLayer
         public static List<Category> ListOfCategories()
         {
             return categoryDB.List().ToList();
+        }
+
+        /// <summary>
+        /// Tìm kiếm và danh sách khách hàng dưới dạng phân trang
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="searchValue"></param>
+        /// <param name="rowCount"></param>
+        /// <returns></returns>
+        public static List<Customer> ListOfCustomers(int page, int pageSize, string searchValue, out int rowCount )
+        {
+            rowCount = customerDB.Count(searchValue);
+            return customerDB.List(page, pageSize, searchValue).ToList();
         }
     }
 }

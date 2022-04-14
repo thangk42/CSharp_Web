@@ -1,5 +1,8 @@
 ﻿
+@{model IEnumerable<SV18T1021293.DomainModel.Customer>;}
+
 @{
+   
     ViewBag.Title = "Khách hàng";
 }
 
@@ -11,7 +14,7 @@
             <div class="input-group">
                 <input type="text" name="searchValue" class="form-control" placeholder="Search...">
                 <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat btn-info">
+                    <button type="submit" id="search-btn" class="btn btn-flat btn-info">
                         <i class="fa fa-search"></i>
                     </button>
                     <a href="~/customer/create" class="btn btn-flat btn-primary" style="margin-left:10px">
@@ -22,7 +25,7 @@
         </form>
 
         <p style="margin: 5px">
-            Có <strong>1024</strong> khách hàng trong tổng số <strong>100</strong> trang
+            Có <strong>@ViewBag.RowCount</strong> khách hàng trong tổng số <strong>100</strong> trang
         </p>
 
         <div class="table-responsive">
@@ -39,20 +42,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 1; i < 10; i++)
+                    @foreach (var item in Model)
                     {
                         <tr>
-                            <td>Huỳnh Quốc Thắng</td>
-                            <td>Săn sale</td>
-                            <td>Huế</td>
-                            <td>Việt Nam</td>
-                            <td>Huế</td>
-                            <td>21231</td>
+                            <td>@item.CustomerName</td>
+                            <td>@item.ContactName</td>
+                            <td>@item.Address</td>
+                            <td>@item.Country</td>
+                            <td>@item.City</td>
+                            <td>@item.PostalCode</td>
                             <td class="text-right">
-                                <a href="~/customer/edit/123" class="btn btn-xs btn-primary">
+                                <a href="~/customer/edit/@item.CustomerID" class="btn btn-xs btn-primary">
                                     <i class="fa fa-edit "></i>
                                 </a>
-                                <a href="~/customer/delete/123" class="btn btn-xs btn-danger">
+                                <a href="~/customer/delete/@item.CustomerID" class="btn btn-xs btn-danger">
                                     <i class="fa fa-remove "></i>
                                 </a>
                             </td>

@@ -53,7 +53,6 @@ namespace SV18T1021293.DataLayer.SQLServer
                 cmd.CommandText = "SELECT * FROM Categories";
                 cmd.CommandType = System.Data.CommandType.Text;
                 cmd.Connection = cn;
-
                 SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
                 while (dbReader.Read())
