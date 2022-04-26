@@ -10,10 +10,15 @@ namespace SV18T1021293.DataLayer.FakeDB
     /// <summary>
     /// Cài đặt chức năng xử lý dữ liệu trên loại hàng theo kiểu Fake
     /// </summary>
-    public class CategoryDAL : ICategoryDAL
+    public class CategoryDAL : ICommonDAL<Category>
 
     {
         public int Add(Category data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Count(string searchValue)
         {
             throw new NotImplementedException();
         }
@@ -24,6 +29,11 @@ namespace SV18T1021293.DataLayer.FakeDB
         }
 
         public Category Get(int categoryID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool InUsed(int categoryID)
         {
             throw new NotImplementedException();
         }
@@ -40,7 +50,12 @@ namespace SV18T1021293.DataLayer.FakeDB
             return data;
         }
 
-        public int Update(Category data)
+        public IList<Category> List(int page, int pageSize, string searchValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(Category data)
         {
             throw new NotImplementedException();
         }

@@ -1,4 +1,4 @@
-﻿
+﻿@model SV18T1021293.DomainModel.Employee
 @{
     ViewBag.Title = "Xóa nhân viên";
 }
@@ -10,11 +10,17 @@
     <div class="box-body">
         <div class="container bootstrap snippets bootdey">
             <hr>
-            <form class="form-horizontal" action="#" method="post" enctype="multipart/form-data">
+            <form class="form-horizontal" action="~/employee/delete/@Model.EmployeeID" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <!-- left column -->
                     <div class="col-md-3 text-center" >
-                           <img src="https://bootdey.com/img/Content/avatar/avatar7.png" class="avatar img-circle img-thumbnail" alt="avatar">
+                        @if (String.IsNullOrEmpty(Model.Photo))
+                            {
+                            <img src="https://randomuser.me/api/portraits/men/3.jpg" class="avatar img-circle img-thumbnail" alt="avatar" />
+                            }
+                         else {
+                               <img src="@Model.Photo" class="avatar img-circle img-thumbnail" alt="avatar" />
+                              }
                            @*<input type="file" class="form-control" name="Photo" id="Photo">*@
                     </div>
 
@@ -23,39 +29,45 @@
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Họ:</label>
                             <div class="col-lg-8">
-                                <p class="form-control-static">Andrew</p>
+                                <p class="form-control-static">@Model.FirstName</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Tên:</label>
                             <div class="col-lg-8">
-                                <p class="form-control-static">Fuller</p>
+                                <p class="form-control-static">@Model.LastName</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Ngày sinh:</label>
                             <div class="col-lg-8">
-                                <p class="form-control-static">1952-02-19</p>
+                                <p class="form-control-static">@Model.BirthDate.ToString("d")</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Email:</label>
                             <div class="col-lg-8">
-                                <p class="form-control-static">andrew.fuller@liteshop.com</p>
+                                <p class="form-control-static">@Model.Email</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Ghi Chú:</label>
                             <div class="col-lg-8">
-                                <p class="form-control-static">Andrew received his BTS commercial and a Ph.D. in international marketing from the University of Dallas. He is fluent in French and Italian and reads German. He joined the company as a sales representative, was promoted to sales manager and was then named vice president of 
-                                sales. Andrew is a member of the Sales Management Roundtable, the Seattle Chamber of Commerce, and the Pacific Rim Importers Association.</p>
+                                <p class="form-control-static">@Model.Note</p>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-10">
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fa fa-save"></i> Xóa dữ liệu
-                                </button>
+                                @if (SV18T1021293.BusinessLayer.CommonDataService.InUsedEmployee(Model.EmployeeID))
+                                {
+                                    <p class="text-danger">Không được xóa nhân viên này</p>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-save"></i> Xóa dữ liệu
+                                    </button>
+                                }
                                 <a href="~/employee" class="btn btn-default">
                                     <i class="fa fa-ban"> Quay lại</i>
                                 </a>

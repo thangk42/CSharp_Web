@@ -27,11 +27,5 @@ namespace SV18T1021293.Web.Controllers
 
             return View();
         }
-
-        public ActionResult Categories()
-        {
-            var model = BusinessLayer.CommonDataService.ListOfCategories();
-            return View(model);
-        }
     }
 }

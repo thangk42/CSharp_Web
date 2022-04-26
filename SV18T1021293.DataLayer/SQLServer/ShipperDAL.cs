@@ -12,38 +12,37 @@ namespace SV18T1021293.DataLayer.SQLServer
     /// <summary>
     /// 
     /// </summary>
-    public class CategoryDAL : _BaseDAL, ICommonDAL<Category>
+    public class ShipperDAL : _BaseDAL, ICommonDAL<Shipper>
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="connectionString"></param>
-        public CategoryDAL(string connectionString) : base(connectionString)
+        public ShipperDAL(string connectionString) : base(connectionString)
         {
 
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public int Add(Category data)
+        public int Add(Shipper data)
         {
-
             int result = 0;
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = @"insert into Categories(CategoryName,Description)
-                                    values(@categoryName,@description) 
+                cmd.CommandText = @" insert into Shippers(ShipperName,Phone)
+                                       values(@shipperName, @phone)
 
                                     SELECT SCOPE_IDENTITY()";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
-                cmd.Parameters.AddWithValue("@categoryName", data.CategoryName);
-                cmd.Parameters.AddWithValue("@description", data.Description);
-               
+                cmd.Parameters.AddWithValue("@shipperName", data.ShipperName);
+                cmd.Parameters.AddWithValue("@phone", data.Phone);
 
                 result = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -61,7 +60,6 @@ namespace SV18T1021293.DataLayer.SQLServer
         public int Count(string searchValue)
         {
             int count = 0;
-
             if (searchValue != "")
                 searchValue = "%" + searchValue + "%";
 
@@ -69,12 +67,12 @@ namespace SV18T1021293.DataLayer.SQLServer
             {
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = @"SELECT COUNT(*)
-                                        FROM Categories
-                                        WHERE(@searchValue = N'')
-                                            OR(
-                                                    (CategoryName LIKE @searchValue)
-                                                 OR(Description LIKE @searchValue)
-                                                )";
+                                    FROM Shippers
+                                    WHERE(@searchValue = N'')
+                                        OR(
+                                                (ShipperName LIKE @searchValue)
+                                             OR(Phone LIKE @searchValue)
+                                            )";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
                 cmd.Parameters.AddWithValue("@searchValue", searchValue);
@@ -84,25 +82,24 @@ namespace SV18T1021293.DataLayer.SQLServer
                 cn.Close();
             }
 
-
             return count;
         }
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="categoryID"></param>
+        /// <param name="shipperID"></param>
         /// <returns></returns>
-        public bool Delete(int categoryID)
+        public bool Delete(int shipperID)
         {
             bool result = false;
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "DELETE FROM Categories WHERE CategoryID = @categoryID";
+                cmd.CommandText = "DELETE FROM Shippers WHERE ShipperID = @shipperID";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
-                cmd.Parameters.AddWithValue("@categoryID", categoryID);
+                cmd.Parameters.AddWithValue("@shipperID", shipperID);
 
                 result = cmd.ExecuteNonQuery() > 0;
                 cn.Close();
@@ -110,26 +107,31 @@ namespace SV18T1021293.DataLayer.SQLServer
 
             return result;
         }
-
-        public Category Get(int categoryID)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="shipperID"></param>
+        /// <returns></returns>
+        public Shipper Get(int shipperID)
         {
-            Category result = null;
+            Shipper result = null;
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "SELECT * From Categories Where CategoryID = @categoryID";
+                cmd.CommandText = "SELECT * From Shippers Where ShipperID = @shipperID";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
-                cmd.Parameters.AddWithValue("@categoryID", categoryID);
+                cmd.Parameters.AddWithValue("@shipperID", shipperID);
 
                 var dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 if (dbReader.Read())
                 {
-                    result = new Category()
+                    result = new Shipper()
                     {
-                        CategoryID = Convert.ToInt32(dbReader["CategoryID"]),
-                        CategoryName = Convert.ToString(dbReader["CategoryName"]),
-                        Description = Convert.ToString(dbReader["Description"])
+                        ShipperID = Convert.ToInt32(dbReader["ShipperID"]),
+                        ShipperName = Convert.ToString(dbReader["ShipperName"]),
+                        Phone = Convert.ToString(dbReader["Phone"]),
+                        
                     };
                 }
 
@@ -137,19 +139,22 @@ namespace SV18T1021293.DataLayer.SQLServer
             }
             return result;
         }
-
-        public bool InUsed(int categoryID)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="shipperID"></param>
+        /// <returns></returns>
+        public bool InUsed(int shipperID)
         {
-
             bool result = false;
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = "select case when exists (select * from Products where CategoryID = @categoryID) then 1 else 0 end";
+                cmd.CommandText = "select case when exists (select * from Orders where ShipperID = @shipperID) then 1 else 0 end";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
-                cmd.Parameters.AddWithValue("@categoryID", categoryID);
+                cmd.Parameters.AddWithValue("@shipperID", shipperID);
 
                 result = Convert.ToBoolean(cmd.ExecuteScalar());
 
@@ -157,26 +162,35 @@ namespace SV18T1021293.DataLayer.SQLServer
             }
             return result;
         }
-
-        public IList<Category> List(int page, int pageSize, string searchValue)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="searchValue"></param>
+        /// <returns></returns>
+        public IList<Shipper> List(int page, int pageSize, string searchValue)
         {
-            List<Category> data = new List<Category>();
+            List<Shipper> data = new List<Shipper>();
 
+
+            if (searchValue != "")
+                searchValue = "%" + searchValue + "%";
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
                 cmd.CommandText = @"SELECT *
                                     FROM
                                     (
-                                        SELECT    *, ROW_NUMBER() OVER (ORDER BY CategoryName) AS RowNumber
-                                        FROM    Categories
+                                        SELECT    *, ROW_NUMBER() OVER (ORDER BY ShipperName) AS RowNumber
+                                        FROM    Shippers
                                         WHERE    (@searchValue = N'')
                                             OR    (
-                                                    (CategoryName LIKE @searchValue)
-                                                 OR (Description LIKE @searchValue)                                              
+                                                    (ShipperName LIKE @searchValue)
+                                                 OR (Phone LIKE @searchValue)
                                                 )
                                     ) AS t
-                                    WHERE (@pageSize = 0) OR (t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize)";
+                                    WHERE t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize;";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
@@ -185,39 +199,45 @@ namespace SV18T1021293.DataLayer.SQLServer
                 cmd.Parameters.AddWithValue("@searchValue", searchValue);
 
                 SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-
                 while (dbReader.Read())
                 {
-                    data.Add(new Category()
+                    data.Add(new Shipper()
                     {
-                        CategoryID = Convert.ToInt32(dbReader["CategoryID"]),
-                        CategoryName = Convert.ToString(dbReader["CategoryName"]),
-                        Description = Convert.ToString(dbReader["Description"])
+                        ShipperID = Convert.ToInt32(dbReader["ShipperID"]),
+                        ShipperName = Convert.ToString(dbReader["ShipperName"]),
+                        Phone = Convert.ToString(dbReader["Phone"]),    
                     });
+
+
                 }
-                dbReader.Close();
                 cn.Close();
             }
+
             return data;
         }
-
-        public bool Update(Category data)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public bool Update(Shipper data)
         {
             bool result = false;
 
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = @"update Categories
-                                    set CategoryName = @categoryName,
-	                                    Description = @description
-                                    where CategoryID = @categoryID";
+                cmd.CommandText = @" update Shippers
+                                     set ShipperName = @shipperName,
+	                                    Phone = @phone
+                                     where ShipperID = @shipperID ";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
-                cmd.Parameters.AddWithValue("@categoryName", data.CategoryName);
-                cmd.Parameters.AddWithValue("@description", data.Description);
-                cmd.Parameters.AddWithValue("@categoryID", data.CategoryID);
+                
+                cmd.Parameters.AddWithValue("@shipperName", data.ShipperName);
+                cmd.Parameters.AddWithValue("@phone", data.Phone);
+                cmd.Parameters.AddWithValue("@shipperID", data.ShipperID);
 
                 result = cmd.ExecuteNonQuery() > 0;
 

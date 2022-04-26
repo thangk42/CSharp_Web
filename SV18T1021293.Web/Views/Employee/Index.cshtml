@@ -1,4 +1,4 @@
-﻿
+﻿@model SV18T1021293.Web.Models.EmployeePaginationResult
 @{
     ViewBag.Title = "Nhân viên";
 }
@@ -10,9 +10,9 @@
     <div class="box-body">
         <form action="#" method="get">
             <div class="input-group">
-                <input type="text" name="searchValue" class="form-control" placeholder="Search...">
+                <input type="text" name="searchValue" class="form-control" placeholder="Search..." value="@Model.SearchValue">
                 <span class="input-group-btn">
-                    <button type="submit" name="search" id="search-btn" class="btn btn-flat btn-info">
+                    <button type="submit" id="search-btn" class="btn btn-flat btn-info">
                         <i class="fa fa-search"></i>
                     </button>
                     <a href="~/employee/create" class="btn btn-flat btn-primary" style="margin-left:10px">
@@ -23,36 +23,37 @@
         </form>
 
         <p style="margin: 5px">
-            Có <strong>1024</strong> nhân viên trong tổng số <strong>100</strong> trang
+            Có <strong>@Model.RowCount</strong> nhân viên trong tổng số <strong>@Model.PageCount</strong> trang
         </p>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped">
-                <thead >
+            <table class="table table-bordered table-hover table-striped" style="table-layout:inherit">
+                <thead>
                     <tr class="bg-primary">
+                        <th></th>
                         <th>Email</th>
                         <th>Họ</th>
                         <th>Tên</th>
                         <th>Ngày sinh</th>
-                        <th>Ghi chú</th>
-                        <th style="width:75px"></th>
+                        @*<th>Ghi chú</th>*@
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @for (int i = 1; i < 10; i++)
+                <tbody style="width:auto;">
+                    @foreach (var item in Model.Data)
                     {
                         <tr>
-                            <td>nancy.davolio@liteshop.com</td>
-                            <td>Nancy</td>
-                            <td>Davolio</td>
-                            <td>27/10/2000</td>
-                            <td>Education includes a BA in psychology from Colorado State University. 
-                            She also completed (The Art of the Cold Call). Nancy is a member of 'Toastmasters International'.</td>
+                            <td><img src="@item.Photo" width="50px" height="50px" /></td>
+                            <td>@item.Email</td>
+                            <td>@item.FirstName</td>
+                            <td>@item.LastName</td>
+                            <td>@item.BirthDate.ToString("d")</td>
+                           @* <td>@item.Note</td>*@
                             <td class="text-right">
-                                <a href="~/employee/edit/123" class="btn btn-xs btn-primary">
+                                <a href="~/employee/edit/@item.EmployeeID" class="btn btn-xs btn-primary">
                                     <i class="fa fa-edit "></i>
                                 </a>
-                                <a href="~/employee/delete/123" class="btn btn-xs btn-danger">
+                                <a href="~/employee/delete/@item.EmployeeID" class="btn btn-xs btn-danger">
                                     <i class="fa fa-remove "></i>
                                 </a>
                             </td>
@@ -67,11 +68,17 @@
     <!-- /.box-body -->
     <div class="box-footer text-center">
         <ul class="pagination">
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
+            @for (int i = 1; i <= Model.PageCount; i++)
+            {
+                if (i == Model.Page)
+                {
+                    <li class="active"><a href="#">@i</a></li>
+                }
+                else
+                {
+                    <li><a href="~/employee?page=@i&&searchValue=@Model.SearchValue">@i</a></li>
+                }
+            }
         </ul>
     </div>
     <!-- /.box-footer-->
