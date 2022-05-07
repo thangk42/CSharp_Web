@@ -1,0 +1,89 @@
+﻿@model SV18T1021293.DomainModel.Employee
+@{
+}
+
+<div class="box box-primary">
+    <div class="box-header with-border">
+    </div>
+    <div class="box-body">
+        <div class="container bootstrap snippets bootdey">
+            <hr>
+            <form class="form-horizontal" action="~/employee/save" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="EmployeeID" value="@Model.EmployeeID" />
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            @if (String.IsNullOrEmpty(Model.Photo))
+                            {
+                                <img src="https://randomuser.me/api/portraits/men/3.jpg" class="avatar img-thumbnail text-center" alt="avatar" width="200ox" height="200ox" id="img-preview"/>
+                            }
+                            else
+                            {
+                                <img src="@Model.Photo" class="avatar img-thumbnail text-center" alt="avatar" height="100px" id="img-preview" >
+                            }
+                           
+                            <input type="file" class="form-control" name="Photo" id="Photo" accept="image/*" value="@Model.Photo">
+                        </div>
+                    </div>
+
+                    <!--form column -->
+                    <div class="col-md-9 personal-info">
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Họ:</label>
+                            <div class="col-lg-8">
+                                @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @autofocus = "autofocus" })
+                                @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Tên:</label>
+                            <div class="col-lg-8">
+                                @Html.TextBoxFor(m => m.LastName, new { @class = "form-control"})
+                                @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Ngày sinh:</label>
+                            <div class="col-lg-8">
+                                @Html.TextBoxFor(m => m.BirthDate,"{0:yyyy-MM-dd}", new { @class = "form-control", type = "date"})
+                                @Html.ValidationMessageFor(m => m.BirthDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Email:</label>
+                            <div class="col-lg-8">
+                                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label">Ghi Chú:</label>
+                            <div class="col-lg-8">
+                                @*   @Html.TextBoxFor(m => m.Note, new { @class = "form-control" })*@
+                                @*<textarea class="form-control" name="Note"></textarea>*@
+                                @Html.TextAreaFor( m => m.Note, new {@class = "form-control"})
+                                @Html.ValidationMessageFor(m => m.Note, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-10">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save"></i> Lưu dữ liệu
+                                </button>
+                                <a href="~/employee" class="btn btn-default">
+                                    <i class="fa fa-ban"> Quay lại</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="box-footer">
+
+    </div>
+</div>
+
+<hr>

@@ -58,9 +58,18 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="shipperID"></param>
         /// <returns></returns>
         [Route("edit/{shipperID}")]
-        public ActionResult Edit(int shipperID)
+        public ActionResult Edit(string shipperID)
         {
-            Shipper model = CommonDataService.GetShipper(shipperID);
+            int id = 0;
+            try
+            {
+                id = Convert.ToInt32(shipperID);
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+            Shipper model = CommonDataService.GetShipper(id);
             if (model == null)
             {
                 return RedirectToAction("Index");
@@ -104,14 +113,23 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="shipperID"></param>
         /// <returns></returns>
         [Route("delete/{shipperID}")]
-        public ActionResult Delete(int shipperID)
+        public ActionResult Delete(string shipperID)
         {
-            if (Request.HttpMethod == "POST")
+            int id = 0;
+            try
             {
-                CommonDataService.DeleteShipper(shipperID);
+                id = Convert.ToInt32(shipperID);
+            }
+            catch
+            {
                 return RedirectToAction("Index");
             }
-            var model = CommonDataService.GetShipper(shipperID);
+            if (Request.HttpMethod == "POST")
+            {
+                CommonDataService.DeleteShipper(id);
+                return RedirectToAction("Index");
+            }
+            var model = CommonDataService.GetShipper(id);
             if (model == null)
             {
                 return RedirectToAction("Index");

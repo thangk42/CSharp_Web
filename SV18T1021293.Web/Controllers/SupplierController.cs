@@ -22,18 +22,39 @@ namespace SV18T1021293.Web.Controllers
         /// <returns></returns>
         public ActionResult Index(int page = 1, string searchValue = "")
         {
-            int pageSize = 10;
+            Models.PaginationSearchInput model = Session["SUPPLIER_SEARCH"] as Models.PaginationSearchInput;
+            if (model == null)
+            {
+                model = new Models.PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = 10,
+                    SearchValue = ""
+                };
+            }
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public ActionResult Search(Models.PaginationSearchInput input)
+        {
             int rowCount = 0;
-            var data = CommonDataService.ListOfSuppliers(page, pageSize, searchValue, out rowCount);
+            var data = CommonDataService.ListOfSuppliers(input.Page, input.PageSize, input.SearchValue, out rowCount);
 
             Models.BasePaginationResult model = new Models.SupplierPaginationResult
             {
-                Page = page,
-                PageSize = pageSize,
+                Page = input.Page,
+                PageSize = input.PageSize,
                 RowCount = rowCount,
-                SearchValue = searchValue,
+                SearchValue = input.SearchValue,
                 Data = data
             };
+
+            Session["SUPPLIER_SEARCH"] = input;
             return View(model);
         }
 
@@ -58,9 +79,18 @@ namespace SV18T1021293.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("edit/{supplierID}")]
-        public ActionResult Edit(int supplierID)
+        public ActionResult Edit(string supplierID)
         {
-            Supplier model = CommonDataService.GetSupplier(supplierID);
+            int id = 0;
+            try
+            {
+                id = Convert.ToInt32(supplierID);
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+            Supplier model = CommonDataService.GetSupplier(id);
             if (model == null)
             {
                 return RedirectToAction("Index");
@@ -113,15 +143,23 @@ namespace SV18T1021293.Web.Controllers
         /// </summary>
         /// <returns></returns>
         [Route("delete/{supplierID}")]
-        public ActionResult Delete(int supplierID)
+        public ActionResult Delete(string supplierID)
         {
-
-            if (Request.HttpMethod == "POST")
+            int id = 0;
+            try
             {
-                CommonDataService.DeleteSupplier(supplierID);
+                id = Convert.ToInt32(supplierID);
+            }
+            catch
+            {
                 return RedirectToAction("Index");
             }
-            var model = CommonDataService.GetSupplier(supplierID);
+            if (Request.HttpMethod == "POST")
+            {
+                CommonDataService.DeleteSupplier(id);
+                return RedirectToAction("Index");
+            }
+            var model = CommonDataService.GetSupplier(id);
             if (model == null)
             {
                 return RedirectToAction("Index");

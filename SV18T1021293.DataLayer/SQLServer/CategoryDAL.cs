@@ -162,6 +162,8 @@ namespace SV18T1021293.DataLayer.SQLServer
         {
             List<Category> data = new List<Category>();
 
+            if (searchValue != "")
+                searchValue = "%" + searchValue + "%";
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();

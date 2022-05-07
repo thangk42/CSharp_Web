@@ -26,12 +26,14 @@ namespace SV18T1021293.DataLayer.SQLServer
         /// <returns></returns>
         public int Add(Employee data)
         {
+            if (data.BirthDate.Year < 1753)
+                return 0;
             int result = 0;
             using (SqlConnection cn = OpenConnection())
             {
                 SqlCommand cmd = new SqlCommand();
-                cmd.CommandText = @"insert into Employees(FirstName,LastName,BirthDate,Photo,Notes,Email,Password)
-                                    values(@firstName,@lastName,@birthDate,@photo,@notes,@email,@password)
+                cmd.CommandText = @"insert into Employees(FirstName,LastName,BirthDate,Photo,Notes,Email)
+                                    values(@firstName,@lastName,@birthDate,@photo,@notes,@email)
 
                                     SELECT SCOPE_IDENTITY()";
                 cmd.CommandType = CommandType.Text;
@@ -43,8 +45,6 @@ namespace SV18T1021293.DataLayer.SQLServer
                 cmd.Parameters.AddWithValue("@photo", String.IsNullOrEmpty(data.Photo)?"":data.Photo);
                 cmd.Parameters.AddWithValue("@notes", data.Note);
                 cmd.Parameters.AddWithValue("@email", data.Email);
-                cmd.Parameters.AddWithValue("@password", "1");
-
 
                 result = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -139,8 +139,7 @@ namespace SV18T1021293.DataLayer.SQLServer
                         BirthDate = Convert.ToDateTime(dbReader["BirthDate"]),
                         Photo = Convert.ToString(dbReader["Photo"]),
                         Note = Convert.ToString(dbReader["Notes"]),
-                        Email = Convert.ToString(dbReader["Email"]),
-                        Password = Convert.ToString(dbReader["Password"])
+                        Email = Convert.ToString(dbReader["Email"])
                     };
                 }
 
@@ -200,7 +199,7 @@ namespace SV18T1021293.DataLayer.SQLServer
                                                  OR (Email LIKE @searchValue)
                                                 )
                                     ) AS t
-                                    WHERE t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize;";
+                                    WHERE (@pageSize = 0) OR( t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize)";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
@@ -216,11 +215,10 @@ namespace SV18T1021293.DataLayer.SQLServer
                         EmployeeID = Convert.ToInt32(dbReader["EmployeeID"]),
                         FirstName = Convert.ToString(dbReader["FirstName"]),
                         LastName = Convert.ToString(dbReader["LastName"]),
-                        BirthDate = Convert.ToDateTime(dbReader["BirthDate"]).Date,
+                        BirthDate = Convert.ToDateTime(dbReader["BirthDate"]),
                         Photo = Convert.ToString(dbReader["Photo"]),
                         Note = Convert.ToString(dbReader["Notes"]),
-                        Email = Convert.ToString(dbReader["Email"]),
-                        Password = Convert.ToString(dbReader["Password"])
+                        Email = Convert.ToString(dbReader["Email"])
                     });
 
 
@@ -237,6 +235,8 @@ namespace SV18T1021293.DataLayer.SQLServer
         /// <returns></returns>
         public bool Update(Employee data)
         {
+            if (data.BirthDate.Year < 1753)
+                return false;
             bool result = false;
 
             using (SqlConnection cn = OpenConnection())
