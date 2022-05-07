@@ -20,38 +20,42 @@ namespace SV18T1021293.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
         {
-            int pageSize = 10;
+            Models.PaginationSearchInput model = Session["CUSTOMER_SEARCH"] as Models.PaginationSearchInput;
+            if(model == null)
+            {
+                model = new Models.PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = 10,
+                    SearchValue = ""
+                };
+            }
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public ActionResult Search(Models.PaginationSearchInput input)
+        {
             int rowCount = 0;
-            var data = CommonDataService.ListOfCustomers(page, pageSize, searchValue, out rowCount);
+            var data = CommonDataService.ListOfCustomers(input.Page, input.PageSize, input.SearchValue, out rowCount);
 
             Models.BasePaginationResult model = new Models.CustomerPaginationResult
             {
-                Page = page,
-                PageSize = pageSize,
+                Page = input.Page,
+                PageSize = input.PageSize,
                 RowCount = rowCount,
-                SearchValue = searchValue,
+                SearchValue = input.SearchValue,    
                 Data = data
             };
+
+            Session["CUSTOMER_SEARCH"] = input;
             return View(model);
-
-            // Code Kiểu ViewBag
-            /*int pageSize = 10;
-            int rowCount = 0;
-
-            var model = CommonDataService.ListOfCustomers(page, pageSize, searchValue, out rowCount);
-            //Tính số trang
-            int pageCount = rowCount / pageSize;
-            if (rowCount % pageSize != 0)
-            {
-                pageCount += 1;
-            }
-            ViewBag.PageCount = pageCount;
-            ViewBag.Page = page;
-            ViewBag.SearchValue = searchValue;
-            ViewBag.RowCount = rowCount;
-            return View(model);*/
         }
 
         /// <summary>
@@ -75,9 +79,18 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="customerID"></param>
         /// <returns></returns>
         [Route("edit/{customerID}")]
-        public ActionResult Edit(int customerID)
+        public ActionResult Edit(string customerID)
         {
-            Customer model = CommonDataService.GetCustomer(customerID);
+            int id = 0;
+            try
+            {
+                id = Convert.ToInt32(customerID);
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+            Customer model = CommonDataService.GetCustomer(id);
             if(model == null)
             {
                 return RedirectToAction("Index");
@@ -128,14 +141,23 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="customerID"></param>
         /// <returns></returns>
         [Route("delete/{customerID}")]
-        public ActionResult Delete(int customerID)
+        public ActionResult Delete(string customerID)
         {
-            if(Request.HttpMethod == "POST")
+            int id = 0;
+            try
             {
-                CommonDataService.DeleteCustomer(customerID);
+                id = Convert.ToInt32(customerID);
+            }
+            catch
+            {
                 return RedirectToAction("Index");
             }
-            var model = CommonDataService.GetCustomer(customerID);
+            if (Request.HttpMethod == "POST")
+            {
+                CommonDataService.DeleteCustomer(id);
+                return RedirectToAction("Index");
+            }
+            var model = CommonDataService.GetCustomer(id);
             if(model == null)
             {
                 return RedirectToAction("Index");

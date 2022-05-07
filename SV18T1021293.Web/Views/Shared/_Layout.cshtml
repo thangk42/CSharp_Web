@@ -14,8 +14,16 @@
     <link rel="stylesheet" href="~/themes/bower_components/Ionicons/css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="~/themes/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="~/themes/bower_components/select2/dist/css/select2.min.css">
+    @*<a href="~/Themes/pages/forms/advanced.html">~/Themes/pages/forms/advanced.html</a>*@
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="~/themes/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="~/themes/bower_components/bootstrap-daterangepicker/daterangepicker.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
+    <!-- Select2 -->
+
     <link rel="stylesheet" href="~/themes/dist/css/skins/_all-skins.min.css">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -57,10 +65,9 @@
         <!-- /.content-wrapper -->
 
         @{Html.RenderPartial("_Footer");}
- 
+
 
         <!-- Control Sidebar -->
-        
         <!-- /.control-sidebar -->
         <!-- Add the sidebar's background. This div must be placed
              immediately after the control sidebar -->
@@ -69,6 +76,10 @@
     <!-- ./wrapper -->
     <!-- jQuery 3 -->
     <script src="~/themes/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- bootstrap datepicker -->
+    <script src="~/themes/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/themes/bower_components/select2/dist/js/select2.full.min.js"></script>
     <!-- Bootstrap 3.3.7 -->
     <script src="~/themes/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- SlimScroll -->
@@ -77,10 +88,17 @@
     <script src="~/themes/bower_components/fastclick/lib/fastclick.js"></script>
     <!-- AdminLTE App -->
     <script src="~/themes/dist/js/adminlte.min.js"></script>
+
     <!-- AdminLTE for demo purposes -->
     <script src="~/themes/dist/js/demo.js"></script>
-    <script>$(document).ready(function () {
-    $('.sidebar-menu').tree()
-  })</script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2();
+            $('.sidebar-menu').tree();
+            $('.datepicker').datepicker({
+                format: "dd/mm/yyyy"
+            });
+        })</script>
+    @RenderSection("scripts", false)
 </body>
 </html>

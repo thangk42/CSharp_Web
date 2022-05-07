@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Configuration;
 using SV18T1021293.DataLayer;
 using SV18T1021293.DomainModel;
+using SV18T1021293.DataLayer.SQLServer;
+
 namespace SV18T1021293.BusinessLayer
 {
     /// <summary>
@@ -19,6 +21,9 @@ namespace SV18T1021293.BusinessLayer
         private static ICommonDAL<Shipper> shipperDB;
         private static ICommonDAL<Employee> employeeDB;
         private static ICommonDAL<Country> countryDB;
+        private static ProductDAL productDB;
+        private static IProductPhotoDAL productPhotoDB;
+        private static IProductAttribiteDAL productAtrributeDB;
         /// <summary>
         /// Ctor
         /// </summary>
@@ -35,6 +40,9 @@ namespace SV18T1021293.BusinessLayer
                 shipperDB = new DataLayer.SQLServer.ShipperDAL(connectionString);
                 employeeDB = new DataLayer.SQLServer.EmployeeDAL(connectionString);
                 countryDB = new DataLayer.SQLServer.CountryDAL(connectionString);
+                productDB = new DataLayer.SQLServer.ProductDAL(connectionString);
+                productPhotoDB = new DataLayer.SQLServer.ProductPhotoDAL(connectionString);
+                productAtrributeDB = new DataLayer.SQLServer.ProductAttributeDAL(connectionString);
             }
         }
         /// <summary>
@@ -143,6 +151,10 @@ namespace SV18T1021293.BusinessLayer
         {
             return employeeDB.List().ToList();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static List<Country> ListOfCountries()
         {
             return countryDB.List().ToList();
@@ -158,6 +170,26 @@ namespace SV18T1021293.BusinessLayer
         {
             rowCount = countryDB.Count(searchValue);
             return countryDB.List(page,pageSize,searchValue).ToList();
+        }
+        /// <summary>
+        /// Tìm kiếm sản phẩn dưới dạng phân trang có và lọc theo loại hàng và nhà cung cấp
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="searchValue"></param>
+        /// <param name="categoryID"></param>
+        /// <param name="supplierID"></param>
+        /// <param name="rowCount"></param>
+        /// <returns></returns>
+        public static List<Product> ListOfProducts(int page, int pageSize, string searchValue, int categoryID, int supplierID, out int rowCount)
+        {
+            rowCount = productDB.Count(searchValue,categoryID,supplierID);
+            return productDB.List(page,pageSize,searchValue,categoryID,supplierID).ToList();
+        }
+
+        public static List<Product> ListOfProducts()
+        {
+            return productDB.List(1,0,"",0,0).ToList();
         }
         /// <summary>
         /// 
@@ -403,6 +435,152 @@ namespace SV18T1021293.BusinessLayer
         public static bool InUsedEmployee(int employeeID)
         {
             return employeeDB.InUsed(employeeID);
+        }
+
+
+
+        /// <summary>
+        /// Thêm mới sản phẩm
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static int AddProduct(Product data)
+        {
+            return productDB.Add(data);
+        }
+        /// <summary>
+        /// Cập nhật thông tin sản phẩm
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool UpdateProduct(Product data)
+        {
+            return productDB.Update(data);
+        }
+        /// <summary>
+        /// Xóa sản phẩm
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public static bool DeleteProduct(int productID)
+        {
+            if (productDB.InUsed(productID))
+                return false;
+            return productDB.Delete(productID);
+        }
+        /// <summary>
+        /// lấy thông tin 1 sản phẩm
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public static Product GetProduct(int productID)
+        {
+            return productDB.Get(productID);
+        }
+        /// <summary>
+        /// kiểm tra xem sản phẩm có dữ liệu liên quan
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public static bool InUsedProduct(int productID)
+        {
+            return productDB.InUsed(productID);
+        }
+
+
+
+        /// <summary>
+        /// Thêm mới 1 ảnh
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static int AddProductPhoto(ProductPhoto data)
+        {
+            return productPhotoDB.Add(data);
+        }
+        /// <summary>
+        /// Cập nhật thông tin 1 ảnh
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool UpdateProductPhoto(ProductPhoto data)
+        {
+            return productPhotoDB.Update(data);
+        }
+        /// <summary>
+        /// Xóa 1 ảnh
+        /// </summary>
+        /// <param name="photoID"></param>
+        /// <returns></returns>
+        public static bool DeleteProductPhoto(int photoID)
+        {
+            return productPhotoDB.Delete(photoID);
+        }
+        /// <summary>
+        /// lấy thông tin 1 ảnh
+        /// </summary>
+        /// <param name="photoID"></param>
+        /// <returns></returns>
+        public static ProductPhoto GetProductPhoto(int photoID)
+        {
+            return productPhotoDB.Get(photoID);
+        }
+        /// <summary>
+        /// Lấy danh sách ảnh của 1 sản phẩm
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public static List<ProductPhoto> ListOfProductPhotos(int productID)
+        {
+            return productPhotoDB.List(productID).ToList();
+        }
+
+
+
+        /// <summary>
+        /// Thêm mới 1 thuộc tính
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static int AddProductAttribute(ProductAttribute data)
+        {
+            return productAtrributeDB.Add(data);
+        }
+        /// <summary>
+        /// Cập nhật thông tin 1 thuộc tính
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool UpdateProductAttribute(ProductAttribute data)
+        {
+            return productAtrributeDB.Update(data);
+        }
+        /// <summary>
+        /// Xóa 1 thuộc tính
+        /// </summary>
+        /// <param name="attributeID"></param>
+        /// <returns></returns>
+        public static bool DeleteProductAttribute(int attributeID)
+        {
+            return productAtrributeDB.Delete(attributeID);
+        }
+        /// <summary>
+        /// lấy thông tin 1 thuộc tính
+        /// </summary>
+        /// <param name="attributeID"></param>
+        /// <returns></returns>
+        public static ProductAttribute GetProductAttribute(int attributeID)
+        {
+            return productAtrributeDB.Get(attributeID);
+        }
+        /// <summary>
+        /// Lấy danh sách thuộc tính của 1 sản phẩm
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public static List<ProductAttribute> ListOfProductAttributes(int productID)
+        {
+            return productAtrributeDB.List(productID).ToList();
         }
     }
 }

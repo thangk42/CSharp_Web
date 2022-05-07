@@ -36,5 +36,71 @@ namespace SV18T1021293.Web
 
             return list;
         }
+        /// <summary>
+        /// Danh sách nhà cung cấp
+        /// </summary>
+        /// <returns></returns>
+        public static List<SelectListItem> Suppliers()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "--Chọn nhà cung cấp--"
+            });
+            foreach (var c in CommonDataService.ListOfSuppliers())
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = Convert.ToString(c.SupplierID),
+                    Text = c.SupplierName,
+                });
+            }
+
+            return list;
+        }
+        /// <summary>
+        /// Danh sách loại hàng
+        /// </summary>
+        /// <returns></returns>
+        public static List<SelectListItem> Categories()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "0",
+                Text = "--Loại hàng--"
+            });
+            foreach (var c in CommonDataService.ListOfCategories())
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = Convert.ToString(c.CategoryID),
+                    Text = c.CategoryName,
+                });
+            }
+
+            return list;
+        }
+        public static List<SelectListItem> Customers()
+        {
+            List<SelectListItem> list = new List<SelectListItem>();
+            list.Add(new SelectListItem()
+            {
+                Value = "",
+                Text = "--Khách hàng--"
+            });
+            foreach (var c in CommonDataService.ListOfCustomers())
+            {
+                list.Add(new SelectListItem()
+                {
+                    Value = Convert.ToString(c.CustomerID),
+                    Text = c.CustomerName,
+                });
+            }
+
+            return list;
+        }
+
     }
 }

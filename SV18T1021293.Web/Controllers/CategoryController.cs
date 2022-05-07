@@ -20,20 +20,41 @@ namespace SV18T1021293.Web.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult Index(int page = 1, string searchValue = "")
+        public ActionResult Index()
         {
-            int pageSize = 10;
+            Models.PaginationSearchInput model = Session["CATEGORY_SEARCH"] as Models.PaginationSearchInput;
+            if (model == null)
+            {
+                model = new Models.PaginationSearchInput()
+                {
+                    Page = 1,
+                    PageSize = 5,
+                    SearchValue = ""
+                };
+            }
+            return View(model);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public ActionResult Search(Models.PaginationSearchInput input)
+        {
             int rowCount = 0;
-            var data = CommonDataService.ListOfCategories(page, pageSize, searchValue, out rowCount);
+            var data = CommonDataService.ListOfCategories(input.Page, input.PageSize, input.SearchValue, out rowCount);
 
             Models.BasePaginationResult model = new Models.CategoryPaginationResult
             {
-                Page = page,
-                PageSize = pageSize,
+                Page = input.Page,
+                PageSize = input.PageSize,
                 RowCount = rowCount,
-                SearchValue = searchValue,
+                SearchValue = input.SearchValue,
                 Data = data
             };
+
+            Session["CATEGORY_SEARCH"] = input;
             return View(model);
         }
 
@@ -57,9 +78,18 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="categoryID"></param>
         /// <returns></returns>
         [Route("edit/{categoryID}")]
-        public ActionResult Edit(int categoryID)
+        public ActionResult Edit(string categoryID)
         {
-            Category model = CommonDataService.GetCategory(categoryID);
+            int id = 0;
+            try
+            {
+                id = Convert.ToInt32(categoryID);
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+            Category model = CommonDataService.GetCategory(id);
             if (model == null)
             {
                 return RedirectToAction("Index");
@@ -102,14 +132,23 @@ namespace SV18T1021293.Web.Controllers
         /// <param name="categoryID"></param>
         /// <returns></returns>
         [Route("delete/{categoryID}")]
-        public ActionResult Delete(int categoryID)
+        public ActionResult Delete(string categoryID)
         {
-            if (Request.HttpMethod == "POST")
+            int id = 0;
+            try
             {
-                CommonDataService.DeleteCategory(categoryID);
+                id = Convert.ToInt32(categoryID);
+            }
+            catch
+            {
                 return RedirectToAction("Index");
             }
-            var model = CommonDataService.GetCategory(categoryID);
+            if (Request.HttpMethod == "POST")
+            {
+                CommonDataService.DeleteCategory(id);
+                return RedirectToAction("Index");
+            }
+            var model = CommonDataService.GetCategory(id);
             if (model == null)
             {
                 return RedirectToAction("Index");

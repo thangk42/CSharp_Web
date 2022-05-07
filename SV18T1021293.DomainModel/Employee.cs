@@ -39,9 +39,5 @@ namespace SV18T1021293.DomainModel
         /// 
         /// </summary>
         public string Email { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Password { get; set; }
     }
 }

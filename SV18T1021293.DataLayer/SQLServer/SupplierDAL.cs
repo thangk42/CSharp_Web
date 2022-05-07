@@ -203,7 +203,7 @@ namespace SV18T1021293.DataLayer.SQLServer
                                                  OR (Address LIKE @searchValue)
                                                 )
                                     ) AS t
-                                    WHERE t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize;";
+                                    WHERE (@pageSize = 0)OR(t.RowNumber BETWEEN (@page - 1) * @pageSize + 1 AND @page * @pageSize)";
                 cmd.CommandType = CommandType.Text;
                 cmd.Connection = cn;
 
