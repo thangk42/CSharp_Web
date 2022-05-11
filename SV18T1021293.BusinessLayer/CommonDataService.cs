@@ -37,7 +37,7 @@ namespace SV18T1021293.BusinessLayer
                 shipperDB = new DataLayer.SQLServer.ShipperDAL(connectionString);
                 employeeDB = new DataLayer.SQLServer.EmployeeDAL(connectionString);
                 countryDB = new DataLayer.SQLServer.CountryDAL(connectionString);
-                //ádsds
+           
             }
         }
         /// <summary>
