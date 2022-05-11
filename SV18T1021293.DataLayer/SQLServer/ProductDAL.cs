@@ -12,7 +12,7 @@ namespace SV18T1021293.DataLayer.SQLServer
     /// <summary>
     /// 
     /// </summary>
-    public class ProductDAL : _BaseDAL, ICommonDAL<Product>
+    public class ProductDAL : _BaseDAL, IProductDAL
     {
         /// <summary>
         /// 
@@ -58,6 +58,72 @@ namespace SV18T1021293.DataLayer.SQLServer
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public int AddAttribute(ProductAttribute data)
+        {
+            int result = 0;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"insert into ProductAttributes(ProductID,AttributeName,AttributeValue,DisplayOrder)
+                                    values(@productID,@attributeName,@attributeValue,@displayOrder) 
+
+                                    SELECT SCOPE_IDENTITY()";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", data.ProductID);
+                cmd.Parameters.AddWithValue("@attributeName", data.AttributeName);
+                cmd.Parameters.AddWithValue("@attributeValue", data.AttributeValue);
+                cmd.Parameters.AddWithValue("@displayOrder", data.DisplayOrder);
+
+
+                result = Convert.ToInt32(cmd.ExecuteScalar());
+
+
+                cn.Close();
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public int AddPhoto(ProductPhoto data)
+        {
+            int result = 0;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"insert into ProductPhotos(ProductID,Photo,Description,DisplayOrder,IsHidden)
+                                    values(@productID,@photo,@description,@displayOrder,@isHidden) 
+
+                                    SELECT SCOPE_IDENTITY()";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", data.ProductID);
+                cmd.Parameters.AddWithValue("@photo", data.Photo);
+                cmd.Parameters.AddWithValue("@description", data.Description);
+                cmd.Parameters.AddWithValue("@displayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@isHidden", data.IsHidden);
+
+
+                result = Convert.ToInt32(cmd.ExecuteScalar());
+
+
+                cn.Close();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="searchValue"></param>
         /// <returns></returns>
         public int Count(string searchValue, int categoryID, int supplierID)
@@ -92,12 +158,6 @@ namespace SV18T1021293.DataLayer.SQLServer
 
             return count;
         }
-
-        public int Count(string searchValue)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -123,6 +183,53 @@ namespace SV18T1021293.DataLayer.SQLServer
 
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attributeID"></param>
+        /// <returns></returns>
+        public bool DeleteAttribute(int attributeID)
+        {
+            bool result = false;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "DELETE FROM ProductAttributes WHERE AttributeID = @attributeID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@attributeID", attributeID);
+
+                result = cmd.ExecuteNonQuery() > 0;
+                cn.Close();
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="photoID"></param>
+        /// <returns></returns>
+        public bool DeletePhoto(int photoID)
+        {
+            bool result = false;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "DELETE FROM ProductPhotos WHERE PhotoID = @photoID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@photoID", photoID);
+
+                result = cmd.ExecuteNonQuery() > 0;
+                cn.Close();
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -158,6 +265,70 @@ namespace SV18T1021293.DataLayer.SQLServer
             }
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attributeID"></param>
+        /// <returns></returns>
+        public ProductAttribute GetAttribute(int attributeID)
+        {
+            ProductAttribute result = null;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "SELECT * From ProductAttributes Where attributeID = @attributeID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+                cmd.Parameters.AddWithValue("@attributeID", attributeID);
+
+                var dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                if (dbReader.Read())
+                {
+                    result = new ProductAttribute()
+                    {
+                        AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
+                        ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                        AttributeName = Convert.ToString(dbReader["AttributeName"]),
+                        AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
+                        DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                    };
+                }
+
+                cn.Close();
+            }
+            return result;
+        }
+
+        public ProductPhoto GetPhoto(int photoID)
+        {
+            ProductPhoto result = null;
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = "SELECT * From ProductPhotos Where PhotoID = @photoID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+                cmd.Parameters.AddWithValue("@photoID", photoID);
+
+                var dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                if (dbReader.Read())
+                {
+                    result = new ProductPhoto()
+                    {
+                        PhotoID = Convert.ToInt32(dbReader["PhotoID"]),
+                        ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                        Photo = Convert.ToString(dbReader["Photo"]),
+                        Description = Convert.ToString(dbReader["Description"]),
+                        DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                        IsHidden = Convert.ToBoolean(dbReader["IsHidden"]),
+                    };
+                }
+
+                cn.Close();
+            }
+            return result;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -237,10 +408,74 @@ namespace SV18T1021293.DataLayer.SQLServer
             }
             return data;
         }
-
-        public IList<Product> List(int page = 1, int pageSize = 0, string searchValue = "")
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        public IList<ProductAttribute> ListAttribute(int productID)
         {
-            throw new NotImplementedException();
+            List<ProductAttribute> data = new List<ProductAttribute>();
+
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"select * from ProductAttributes
+                                    where ProductID = @productID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", productID);
+                SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dbReader.Read())
+                {
+                    data.Add(new ProductAttribute()
+                    {
+                        AttributeID = Convert.ToInt32(dbReader["AttributeID"]),
+                        ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                        AttributeName = Convert.ToString(dbReader["AttributeName"]),
+                        AttributeValue = Convert.ToString(dbReader["AttributeValue"]),
+                        DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                    });
+                }
+                dbReader.Close();
+                cn.Close();
+            }
+            return data;
+        }
+
+        public IList<ProductPhoto> ListPhoto(int productID)
+        {
+            List<ProductPhoto> data = new List<ProductPhoto>();
+
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"select * from ProductPhotos 
+                                    where ProductID = @productID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", productID);
+                SqlDataReader dbReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dbReader.Read())
+                {
+                    data.Add(new ProductPhoto()
+                    {
+                        PhotoID = Convert.ToInt32(dbReader["PhotoID"]),
+                        ProductID = Convert.ToInt32(dbReader["ProductID"]),
+                        Photo = Convert.ToString(dbReader["Photo"]),
+                        Description = Convert.ToString(dbReader["Description"]),
+                        DisplayOrder = Convert.ToInt32(dbReader["DisplayOrder"]),
+                        IsHidden = Convert.ToBoolean(dbReader["IsHidden"]),
+                    });
+                }
+                dbReader.Close();
+                cn.Close();
+            }
+            return data;
         }
 
         /// <summary>
@@ -281,6 +516,72 @@ namespace SV18T1021293.DataLayer.SQLServer
             }
 
             return result; 
+        }
+
+        public bool UpdateAttribute(ProductAttribute data)
+        {
+            bool result = false;
+
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"update ProductAttributes
+                                    set ProductID = @productID,
+	                                    AttributeName = @attributeName,
+                                        AttributeValue = @attributeValue,
+	                                    DisplayOrder = @displayOrder
+                                     where AttributeID = @attributeID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", data.ProductID);
+                cmd.Parameters.AddWithValue("@attributeName", data.AttributeName);
+                cmd.Parameters.AddWithValue("@attributeValue", data.AttributeValue);
+                cmd.Parameters.AddWithValue("@displayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@attributeID", data.AttributeID);
+
+
+                result = cmd.ExecuteNonQuery() > 0;
+
+
+                cn.Close();
+            }
+
+            return result;
+        }
+
+        public bool UpdatePhoto(ProductPhoto data)
+        {
+            bool result = false;
+
+            using (SqlConnection cn = OpenConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandText = @"update ProductPhotos
+                                    set ProductID = @productID,
+	                                    Photo = @photo,
+                                        Description = @description,
+	                                    DisplayOrder = @displayOrder,
+	                                    IsHidden = @isHidden
+                                     where PhotoID = @photoID";
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = cn;
+
+                cmd.Parameters.AddWithValue("@productID", data.ProductID);
+                cmd.Parameters.AddWithValue("@photo", data.Photo);
+                cmd.Parameters.AddWithValue("@description", data.Description);
+                cmd.Parameters.AddWithValue("@displayOrder", data.DisplayOrder);
+                cmd.Parameters.AddWithValue("@isHidden", data.IsHidden);
+                cmd.Parameters.AddWithValue("@photoID", data.PhotoID);
+
+
+                result = cmd.ExecuteNonQuery() > 0;
+
+
+                cn.Close();
+            }
+
+            return result;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace SV18T1021293.Web.Controllers
         public ActionResult Search(Models.ProductPaginationSearchInput input)
         {
             int rowCount = 0;
-            var data = CommonDataService.ListOfProducts(input.Page, input.PageSize, input.SearchValue, Convert.ToInt32(input.CategoryID), Convert.ToInt32(input.SupplierID), out rowCount);
+            var data = ProductDataService.ListOfProducts(input.Page, input.PageSize, input.SearchValue, Convert.ToInt32(input.CategoryID), Convert.ToInt32(input.SupplierID), out rowCount);
 
             Models.BasePaginationResult model = new Models.ProductPaginationResult
             {
@@ -69,7 +69,7 @@ namespace SV18T1021293.Web.Controllers
             {
                 ProductID = 0
             };
-            ViewBag.Title = "Bổ sung nhân viên ";
+            ViewBag.Title = "Bổ sung mặt hàng ";
 
             return View(model);
         }
@@ -90,7 +90,7 @@ namespace SV18T1021293.Web.Controllers
             {
                 return RedirectToAction("Index");
             }
-            Product model = CommonDataService.GetProduct(id);
+            Product model = ProductDataService.GetProduct(id);
             if (model == null)
             {
                 return RedirectToAction("Index");
@@ -148,12 +148,12 @@ namespace SV18T1021293.Web.Controllers
             }
             if (model.ProductID == 0)
             {
-                CommonDataService.AddProduct(model);
+                ProductDataService.AddProduct(model);
                 return RedirectToAction("Index");
             }
             else
             {
-                CommonDataService.UpdateProduct(model);
+                ProductDataService.UpdateProduct(model);
                 return RedirectToAction("Index");
 
             }
@@ -178,7 +178,7 @@ namespace SV18T1021293.Web.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var model = CommonDataService.GetProduct(id);
+            var model = ProductDataService.GetProduct(id);
             if (Request.HttpMethod == "POST")
             {
                 // delete image product
@@ -189,13 +189,13 @@ namespace SV18T1021293.Web.Controllers
                         System.IO.File.Delete(fullPath);
                 }
                 // delete image product photo
-                foreach (var p in CommonDataService.ListOfProductPhotos(id))
+                foreach (var p in ProductDataService.ListOfProductPhotos(id))
                 {
                     string fullPath = Server.MapPath("~/Images/ProductPhotos/" + p.Photo);
                     if (System.IO.File.Exists(fullPath))
                         System.IO.File.Delete(fullPath);
                 }
-                CommonDataService.DeleteProduct(id);
+                ProductDataService.DeleteProduct(id);
                 return RedirectToAction("Index");
             }
             if (model == null)
@@ -234,7 +234,7 @@ namespace SV18T1021293.Web.Controllers
                 return RedirectToAction("Edit", new { productID = productID });
 
             }
-                    model = CommonDataService.GetProductPhoto((int)photoID);
+                    model = ProductDataService.GetProductPhoto((int)photoID);
                     if(model == null)
                     {
                         return RedirectToAction("Index");
@@ -242,11 +242,11 @@ namespace SV18T1021293.Web.Controllers
                     ViewBag.Title = "Thay đổi ảnh";
                     break;
                 case "delete":
-                    var mode = CommonDataService.GetProductPhoto(photoID.Value);
+                    var mode = ProductDataService.GetProductPhoto(photoID.Value);
                     string fullPath = Server.MapPath("~/Images/" + mode.Photo);
                     if (System.IO.File.Exists(fullPath))
                         System.IO.File.Delete(fullPath);
-                    CommonDataService.DeleteProductPhoto(photoID.Value);
+                    ProductDataService.DeleteProductPhoto(photoID.Value);
                     return RedirectToAction("Edit", new { productID = productID });
                 default:
                     return RedirectToAction("Index");
@@ -285,11 +285,11 @@ namespace SV18T1021293.Web.Controllers
                         return RedirectToAction("Edit", new { productID = productID });
 
                     }
-                    model = CommonDataService.GetProductAttribute((int)attributeID);
+                    model = ProductDataService.GetProductAttribute((int)attributeID);
                     ViewBag.Title = "Thay đổi thuộc tính";
                     break;
                 case "delete":
-                    CommonDataService.DeleteProductAttribute((int)attributeID);
+                    ProductDataService.DeleteProductAttribute((int)attributeID);
                     return RedirectToAction("Edit", new { productID = productID });
                 default:
                     return RedirectToAction("Index");
@@ -328,12 +328,12 @@ namespace SV18T1021293.Web.Controllers
             }    
             if(model.PhotoID == 0)
             {
-                CommonDataService.AddProductPhoto(model);
+                ProductDataService.AddProductPhoto(model);
                 return RedirectToAction("Edit", new { productID = model.ProductID });
             }
             else
             {
-                CommonDataService.UpdateProductPhoto(model);
+                ProductDataService.UpdateProductPhoto(model);
                 return RedirectToAction("Edit", new { productID = model.ProductID });
             }
         }
@@ -353,12 +353,12 @@ namespace SV18T1021293.Web.Controllers
             }
             if (model.AttributeID == 0)
             {
-                CommonDataService.AddProductAttribute(model);
+                ProductDataService.AddProductAttribute(model);
                 return RedirectToAction("Edit", new { productID = model.ProductID });
             }
             else
             {
-                CommonDataService.UpdateProductAttribute(model);
+                ProductDataService.UpdateProductAttribute(model);
                 return RedirectToAction("Edit", new { productID = model.ProductID });
             }
         }

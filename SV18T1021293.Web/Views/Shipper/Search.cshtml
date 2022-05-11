@@ -1,18 +1,18 @@
-﻿@model SV18T1021293.Web.Models.CategoryPaginationResult
+﻿@model SV18T1021293.Web.Models.ShipperPaginationResult
 @{
     Layout = null;
 }
 
 <p style="margin: 5px">
-    Có <strong>@Model.RowCount</strong> loại hàng trong tổng số <strong>@Model.PageCount</strong> trang
+    Có <strong>@Model.RowCount</strong> Người giao hàng trong tổng số <strong>@Model.PageCount</strong> trang
 </p>
 
 <div class="table-responsive">
     <table class="table table-bordered table-hover table-striped">
         <thead>
             <tr class="bg-primary">
-                <th>Tên loại hàng</th>
-                <th>Mô tả</th>
+                <th>Tên người giao hàng</th>
+                <th>Số điện thoại</th>
                 <th style="width:75px"></th>
             </tr>
         </thead>
@@ -20,13 +20,13 @@
             @foreach (var item in Model.Data)
             {
                 <tr>
-                    <td>@item.CategoryName</td>
-                    <td>@item.Description</td>
+                    <td>@item.ShipperName</td>
+                    <td>@item.Phone</td>
                     <td class="text-right">
-                        <a href="~/category/edit/@item.CategoryID" class="btn btn-xs btn-primary">
+                        <a href="~/shipper/edit/@item.ShipperID" class="btn btn-xs btn-primary">
                             <i class="fa fa-edit "></i>
                         </a>
-                        <a href="~/category/delete/@item.CategoryID" class="btn btn-xs btn-danger">
+                        <a href="~/shipper/delete/@item.ShipperID" class="btn btn-xs btn-danger">
                             <i class="fa fa-remove "></i>
                         </a>
                     </td>
@@ -36,6 +36,7 @@
     </table>
 </div>
 
+<!-- /.box-body -->
 <div class="box-footer text-center">
     <ul class="pagination">
         @if (Model.PageCount > 1)
@@ -44,11 +45,11 @@
             {
                 if (i == Model.Page)
                 {
-                    <li class="active"><a href="#">@i</a></li>
+                <li class="active"><a href="#">@i</a></li>
                 }
                 else
                 {
-                    <li><a href="javascript:;" onclick="doSearch(@i)">@i</a></li>
+                <li><a href="javascript:;" onclick="doSearch(@i)">@i</a></li>
                 }
             }
         }

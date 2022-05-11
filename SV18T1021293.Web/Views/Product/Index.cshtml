@@ -11,7 +11,7 @@
             @Html.HiddenFor(m => m.PageSize)
             <div class="row">
                 <div class="col-sm-3">
-                    @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.Categories(), new { @class = "form-control select2", @Onlick = "doSearch(1)"})
+                    @Html.DropDownListFor(m => m.CategoryID, SelectListHelper.Categories(), new { @class = "form-control select2"})
                 </div>
                 <div class="col-sm-3">
                     @Html.DropDownListFor(m => m.SupplierID, SelectListHelper.Suppliers(), new { @class = "form-control select2" })

@@ -110,7 +110,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in SV18T1021293.BusinessLayer.CommonDataService.ListOfProductPhotos(Model.ProductID))
+                @foreach (var item in SV18T1021293.BusinessLayer.ProductDataService.ListOfProductPhotos(Model.ProductID))
                 {
                     <tr>
                         <td style="vertical-align:middle">
@@ -164,7 +164,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in SV18T1021293.BusinessLayer.CommonDataService.ListOfProductAttributes(Model.ProductID))
+                @foreach (var item in SV18T1021293.BusinessLayer.ProductDataService.ListOfProductAttributes(Model.ProductID))
                 {
                     <tr>
                         <td style="vertical-align:middle">@item.AttributeName</td>

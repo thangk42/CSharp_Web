@@ -14,7 +14,7 @@
         <form id="searchInput" action="~/customer/search" method="get">
             @Html.HiddenFor(m => m.PageSize)
             <div class="input-group">
-                <input type="text" name="searchValue" class="form-control" placeholder="Search..." value="@Model.SearchValue">
+                <input type="text" name="searchValue" class="form-control" placeholder="Nhập tên hoặc địa chỉ hoặc tên giao dịch" value="@Model.SearchValue">
                 <span class="input-group-btn">
                     <button type="submit" id="search-btn" class="btn btn-flat btn-info">
                         <i class="fa fa-search"></i>
