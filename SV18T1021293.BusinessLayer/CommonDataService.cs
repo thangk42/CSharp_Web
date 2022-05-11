@@ -21,9 +21,6 @@ namespace SV18T1021293.BusinessLayer
         private static ICommonDAL<Shipper> shipperDB;
         private static ICommonDAL<Employee> employeeDB;
         private static ICommonDAL<Country> countryDB;
-      /*  private static ProductDAL productDB;
-        private static IProductPhotoDAL productPhotoDB;
-        private static IProductAttributeDAL productAtrributeDB;*/
         /// <summary>
         /// Ctor
         /// </summary>
@@ -40,9 +37,6 @@ namespace SV18T1021293.BusinessLayer
                 shipperDB = new DataLayer.SQLServer.ShipperDAL(connectionString);
                 employeeDB = new DataLayer.SQLServer.EmployeeDAL(connectionString);
                 countryDB = new DataLayer.SQLServer.CountryDAL(connectionString);
-              /*  productDB = new DataLayer.SQLServer.ProductDAL(connectionString);
-                productPhotoDB = new DataLayer.SQLServer.ProductPhotoDAL(connectionString);
-                productAtrributeDB = new DataLayer.SQLServer.ProductAttributeDAL(connectionString);*/
             }
         }
         /// <summary>
