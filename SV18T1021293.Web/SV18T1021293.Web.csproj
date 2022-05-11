@@ -5821,6 +5821,7 @@
     <Content Include="Views\Employee\Search.cshtml" />
     <Content Include="Views\Supplier\Search.cshtml" />
     <Content Include="Views\Product\Search.cshtml" />
+    <Content Include="Views\Shipper\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
